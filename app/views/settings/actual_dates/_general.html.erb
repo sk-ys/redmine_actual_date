@@ -1,0 +1,19 @@
+<div class='box'>
+  <h3><%= 'custom field id settings' %></h3>
+  <p>
+    <label><%= 'actual start date custom field id' %></label>
+    <%=
+      number_field_tag 'settings[actual_start_date]',
+      Setting.plugin_redmine_actual_date['actual_start_date'],
+      min: 1
+    %><br/>
+  </p>
+  <p>
+    <label><%= 'actual end date custom field id' %></label>
+    <%=
+      number_field_tag 'settings[actual_end_date]',
+      Setting.plugin_redmine_actual_date['actual_end_date'],
+      min: 1
+    %><br/>
+  </p>
+</div>

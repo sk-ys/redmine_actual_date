@@ -1,0 +1,9 @@
+<% content_for :header_tags do %>
+  <script type="text/javascript">//<![CDATA[
+  let ActualDates = {
+    original_dates: <%= original_dates.to_json.html_safe %>,
+    actual_dates: <%= actual_dates.to_json.html_safe %>,
+  };
+  //]]</script>
+  <%= javascript_include_tag('actual_dates.js', plugin: 'redmine_actual_date') %>
+<% end %>

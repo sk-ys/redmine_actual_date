@@ -1,6 +1,10 @@
 module ActualDates
   class Hooks < Redmine::Hook::ViewListener
     def view_layouts_base_html_head(context={})
+      unless get_actual_dates_cf_id
+        return ''
+      end
+
       actual_dates = get_actual_dates()
       if actual_dates.nil?
         return ''
@@ -17,25 +21,29 @@ module ActualDates
       })
     end
 
-    def get_actual_dates
-      actual_start_date_cf_id =
+    def get_actual_dates_cf_id
+      @actual_start_date_cf_id =
         Setting.plugin_redmine_actual_date['actual_start_date'].to_f
-      unless actual_start_date_cf_id > 0
-        return nil
+      unless @actual_start_date_cf_id > 0
+        return false
       end
 
-      actual_end_date_cf_id =
+      @actual_end_date_cf_id =
         Setting.plugin_redmine_actual_date['actual_end_date'].to_f
-      unless actual_end_date_cf_id > 0
-        return nil
+      unless @actual_end_date_cf_id > 0
+        return false
       end
 
-      if actual_start_date_cf_id == actual_end_date_cf_id
-        return nil
+      if @actual_start_date_cf_id == @actual_end_date_cf_id
+        return false
       end
 
+      return true
+    end
+
+    def get_actual_dates
       custom_values = CustomValue.where(
-        custom_field_id: [actual_start_date_cf_id, actual_end_date_cf_id])
+        custom_field_id: [@actual_start_date_cf_id, @actual_end_date_cf_id])
 
       allowed_project_ids = get_allowed_project_ids()
 
@@ -53,7 +61,7 @@ module ActualDates
           actual_dates[issue_id] = {}
         end
 
-        if custom_field_id == actual_start_date_cf_id
+        if custom_field_id == @actual_start_date_cf_id
           actual_dates[issue_id]['start'] = value
         else
           actual_dates[issue_id]['end'] = value

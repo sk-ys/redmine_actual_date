@@ -16,6 +16,12 @@ module ActualDates
       context[:original_dates] = original_dates
       context[:actual_start_date_cf_id] = @actual_start_date_cf_id
       context[:actual_end_date_cf_id] = @actual_end_date_cf_id
+      context[:bar_settings] = {
+        top: Setting.plugin_redmine_actual_date['actual_bar_top'],
+        height: Setting.plugin_redmine_actual_date['actual_bar_height'],
+        color: Setting.plugin_redmine_actual_date['actual_bar_color'],
+        opacity: Setting.plugin_redmine_actual_date['actual_bar_opacity'],
+      }
 
       context[:hook_caller].send(:render, {
         partial: '/hooks/actual_dates/view_layouts_base_html_head',

@@ -8,6 +8,7 @@
       end: <%= actual_end_date_cf_id %>,
     },
     label_date_information: '<%= l(:label_date_information) %>',
+    bar_settings: <%= bar_settings.to_json.html_safe %>,
   };
   //]]</script>
   <%= javascript_include_tag('actual_dates.js', plugin: 'redmine_actual_date') %>

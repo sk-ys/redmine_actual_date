@@ -13,6 +13,10 @@ Redmine::Plugin.register :redmine_actual_date do
   settings default: {
     actual_start_date: nil,
     actual_end_date: nil,
+    actual_bar_top: 10,
+    actual_bar_height: 5,
+    actual_bar_color: '#ff9800',
+    actual_bar_opacity: 0.6,
     rearrange_date_information_on_issue: false,
   }, partial: 'settings/actual_dates/general'
 

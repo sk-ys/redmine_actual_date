@@ -28,14 +28,27 @@ $(function () {
     return
   }
   var zoom = Math.pow(2, zoom_org);
-  var actual_bar_height = 5; // todo: customizable
-  var actual_bar_opacity = 0.6; // todo: customizable
-  var actual_bar_background_color = '#ff9800'; // todo: customizable
+
+  var load_bar_config = function (key, default_value) {
+    try {
+      var value = ActualDates['bar_settings'][key];
+    } catch (error) {
+      var value = default_value;
+    }
+    return value;
+  }
+
+  // Note: original task bar = {height: 8px, border: 1px}
+  var actual_bar_top = load_bar_config('top', 10) + 'px';
+  var actual_bar_height = load_bar_config('height', 5) + 'px';
+  var actual_bar_color = load_bar_config('color', '#ff9800');
+  var actual_bar_opacity = load_bar_config('opacity', 0.6);
+
   var actual_bar_base = $('<div class="task_leaf_actual">&nbsp;</div>')
   actual_bar_base.css({
     position: 'absolute',
-    backgroundColor: actual_bar_background_color,
-    top: '10px', // parent: {height: 9px, border: 1px}
+    backgroundColor: actual_bar_color,
+    top: actual_bar_top,
     height: actual_bar_height,
     opacity: actual_bar_opacity,
   })

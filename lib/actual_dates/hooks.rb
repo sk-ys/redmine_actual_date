@@ -14,6 +14,8 @@ module ActualDates
 
       context[:actual_dates] = actual_dates
       context[:original_dates] = original_dates
+      context[:actual_start_date_cf_id] = @actual_start_date_cf_id
+      context[:actual_end_date_cf_id] = @actual_end_date_cf_id
 
       context[:hook_caller].send(:render, {
         partial: '/hooks/actual_dates/view_layouts_base_html_head',
@@ -23,13 +25,13 @@ module ActualDates
 
     def get_actual_dates_cf_id
       @actual_start_date_cf_id =
-        Setting.plugin_redmine_actual_date['actual_start_date'].to_f
+        Setting.plugin_redmine_actual_date['actual_start_date'].to_i
       unless @actual_start_date_cf_id > 0
         return false
       end
 
       @actual_end_date_cf_id =
-        Setting.plugin_redmine_actual_date['actual_end_date'].to_f
+        Setting.plugin_redmine_actual_date['actual_end_date'].to_i
       unless @actual_end_date_cf_id > 0
         return false
       end

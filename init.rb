@@ -12,7 +12,8 @@ Redmine::Plugin.register :redmine_actual_date do
 
   settings default: {
     actual_start_date: nil,
-    actual_end_date: nil
+    actual_end_date: nil,
+    rearrange_date_information_on_issue: false,
   }, partial: 'settings/actual_dates/general'
 
   project_module :actual_dates do

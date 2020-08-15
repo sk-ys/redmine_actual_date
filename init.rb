@@ -15,8 +15,7 @@ Redmine::Plugin.register :redmine_actual_date do
     actual_end_date: nil
   }, partial: 'settings/actual_dates/general'
 
-  # todo:
-  # project_module :actual_dates do
-  #   permission :view_actual_dates, {}
-  # end
+  project_module :actual_dates do
+    permission :view_actual_dates_bar, {}
+  end
 end

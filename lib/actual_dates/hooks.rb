@@ -37,11 +37,17 @@ module ActualDates
       custom_values = CustomValue.where(
         custom_field_id: [actual_start_date_cf_id, actual_end_date_cf_id])
 
+      allowed_project_ids = get_allowed_project_ids()
+
       actual_dates = {}
       custom_values.each do |cv|
         custom_field_id = cv['custom_field_id']
         issue_id = cv['customized_id']
         value = cv['value']
+
+        unless allowed_project_ids.include?(get_project_id(issue_id))
+          next
+        end
 
         unless actual_dates.key?(issue_id)
           actual_dates[issue_id] = {}
@@ -70,5 +76,23 @@ module ActualDates
 
       return original_dates
     end
+
+    def get_allowed_project_ids
+      projects = Project.visible
+      # projects = User.current.memberships.collect(&:project).compact.uniq
+      allowed_project_ids = []
+      projects.each do |project|
+        if User.current.allowed_to?(:view_actual_dates_bar, project)
+          allowed_project_ids.push project.id
+        end
+      end
+
+      return allowed_project_ids
+    end
+
+    def get_project_id(issue_id)
+      return Issue.find(issue_id)&.project_id
+    end
+
   end
 end

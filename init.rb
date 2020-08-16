@@ -2,7 +2,7 @@ require 'actual_dates/hooks'
 Redmine::Plugin.register :redmine_actual_date do
   name 'Redmine Actual Date plugin'
   author 'sk-ys'
-  description 'This is a plugin for Redmine'
+  description 'This plugin displays a bar of actual dates on the Gantt chart'
   version '0.0.2'
   url 'https://github.com/sk-ys/redmine_actual_date'
   author_url 'https://github.com/sk-ys'

@@ -1,8 +1,8 @@
 # Redmine Actual Date Plugin
 
 ## Description
-This is the plugin for [Redmine](http://www.redmine.org/).
-This plugin displays the actual dates bar on the Gantt chart.
+This is a plugin for [Redmine](http://www.redmine.org/).
+This plugin displays a bar of actual dates on the Gantt chart.
 The actual start/end date is custom field value.
 ![](./doc/gantt_page_zoom.png)
 

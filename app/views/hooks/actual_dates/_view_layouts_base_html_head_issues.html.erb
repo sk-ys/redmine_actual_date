@@ -1,0 +1,13 @@
+<% content_for :header_tags do %>
+  <script type="text/javascript">//<![CDATA[
+  let ActualDates = {
+    cf_id: {
+      start: <%= actual_start_date_cf_id %>,
+      end: <%= actual_end_date_cf_id %>,
+    },
+    label_date_information: '<%= l(:label_date_information) %>',
+  };
+  //]]</script>
+  <%= javascript_include_tag('rearrange_date_information.js',
+                             plugin: 'redmine_actual_date') %>
+<% end %>

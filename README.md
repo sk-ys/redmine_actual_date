@@ -9,7 +9,7 @@ The actual start/end date is custom field value.
 ## Installation
 1. Install the plugin
     - A. Without Git
-        1. Download the Zip file from the link above and extract files into your Redmine plugin directory.
+        1. Download the [Zip file](https://github.com/sk-ys/redmine_actual_date/archive/master.zip) and extract files into your Redmine plugin directory.
         2. Rename the directory name to `redmine_actual_date`.
     - B. With Git
         1. Set the current directory to the Redmine plugin directory.
@@ -43,7 +43,11 @@ The actual dates yellow bar will be added.
 ## Notice
 - Actual dates bar is drawn in JavaScript.
 - PNG and PDF export is not supported.
-- If you want to hide the actual dates bar uninstall this plugin.
 
 ## Change Logs
+- v0.0.2:
+    - Feature
+        - Add permission: `view actual dates bar`
+        - Bar is now customizable in the plugin's configuration page
+        - Rearrange issue page
 - v0.0.1: first development version

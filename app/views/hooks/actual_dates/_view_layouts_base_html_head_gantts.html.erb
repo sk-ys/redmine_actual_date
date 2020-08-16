@@ -3,7 +3,9 @@
   let ActualDates = {
     original_dates: <%= original_dates.to_json.html_safe %>,
     actual_dates: <%= actual_dates.to_json.html_safe %>,
+    bar_settings: <%= bar_settings.to_json.html_safe %>,
   };
   //]]</script>
-  <%= javascript_include_tag('actual_dates.js', plugin: 'redmine_actual_date') %>
+  <%= javascript_include_tag('actual_dates.js',
+                             plugin: 'redmine_actual_date') %>
 <% end %>

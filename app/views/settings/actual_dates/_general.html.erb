@@ -1,19 +1,68 @@
+<%
+  @settings = ActionController::Parameters.new(@settings)
+%>
+
 <div class='box'>
-  <h3><%= 'custom field id settings' %></h3>
+  <h3><%= 'Custom field id settings' %></h3>
   <p>
     <label><%= 'actual start date custom field id' %></label>
     <%=
       number_field_tag 'settings[actual_start_date]',
-      Setting.plugin_redmine_actual_date['actual_start_date'],
-      min: 1
-    %><br/>
+      @settings['actual_start_date'],
+      min: 1, step: 1
+    %>
   </p>
   <p>
     <label><%= 'actual end date custom field id' %></label>
     <%=
       number_field_tag 'settings[actual_end_date]',
-      Setting.plugin_redmine_actual_date['actual_end_date'],
-      min: 1
-    %><br/>
+      @settings['actual_end_date'],
+      min: 1, step: 1
+    %>
+  </p>
+</div>
+
+<div class='box'>
+  <h3><%= 'Bar design settings' %></h3>
+  <p>
+    <label><%= 'top' %></label>
+    <%=
+      number_field_tag 'settings[actual_bar_top]',
+      @settings['actual_bar_top']
+    %>
+  </p>
+  <p>
+    <label><%= 'height' %></label>
+    <%=
+      number_field_tag 'settings[actual_bar_height]',
+      @settings['actual_bar_height'],
+      min: 0
+    %>
+  </p>
+  <p>
+    <label><%= 'color' %></label>
+    <%=
+      color_field_tag 'settings[actual_bar_color]',
+      @settings['actual_bar_color']
+    %>
+  </p>
+  <p>
+    <label><%= 'opacity' %></label>
+    <%=
+      number_field_tag 'settings[actual_bar_opacity]',
+      @settings['actual_bar_opacity'],
+      min: 0, max: 1, step: 0.01
+    %>
+  </p>
+</div>
+
+<div class='box'>
+  <h3><%= 'Issue page settings' %></h3>
+  <p>
+    <label><%= 'rearrange date information' %></label>
+    <%=
+      check_box_tag 'settings[rearrange_date_information_on_issue]',
+      1, @settings[:rearrange_date_information_on_issue]
+    %>
   </p>
 </div>

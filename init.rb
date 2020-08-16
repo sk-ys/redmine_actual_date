@@ -3,7 +3,7 @@ Redmine::Plugin.register :redmine_actual_date do
   name 'Redmine Actual Date plugin'
   author 'sk-ys'
   description 'This is a plugin for Redmine'
-  version '0.0.1'
+  version '0.0.2'
   url 'https://github.com/sk-ys/redmine_actual_date'
   author_url 'https://github.com/sk-ys'
 
@@ -12,11 +12,15 @@ Redmine::Plugin.register :redmine_actual_date do
 
   settings default: {
     actual_start_date: nil,
-    actual_end_date: nil
+    actual_end_date: nil,
+    actual_bar_top: 10,
+    actual_bar_height: 5,
+    actual_bar_color: '#ff9800',
+    actual_bar_opacity: 0.6,
+    rearrange_date_information_on_issue: false,
   }, partial: 'settings/actual_dates/general'
 
-  # todo:
-  # project_module :actual_dates do
-  #   permission :view_actual_dates, {}
-  # end
+  project_module :actual_dates do
+    permission :view_actual_dates_bar, {}
+  end
 end

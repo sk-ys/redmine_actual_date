@@ -10,6 +10,8 @@ module ActualDates
         return
       end
 
+      return unless get_actual_dates_cf_id
+
       if params[:controller] == 'gantts'
         view_layouts_base_html_head_gantts(context)
       elsif params[:controller] == 'issues'
@@ -25,8 +27,6 @@ module ActualDates
       else
         @projects = Project.visible
       end
-
-      return unless get_actual_dates_cf_id
 
       actual_dates = get_actual_dates()
       return if actual_dates.nil?

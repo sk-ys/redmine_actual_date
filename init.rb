@@ -3,7 +3,7 @@ Redmine::Plugin.register :redmine_actual_date do
   name 'Redmine Actual Date plugin'
   author 'sk-ys'
   description 'This is a plugin for Redmine'
-  version '0.0.1'
+  version '0.0.2'
   url 'https://github.com/sk-ys/redmine_actual_date'
   author_url 'https://github.com/sk-ys'
 

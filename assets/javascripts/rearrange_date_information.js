@@ -26,20 +26,20 @@ $(function () {
 
     // --- move elements ---
     // start date
-    $('#content div.attributes div.attribute.start-date:first')
+    $('#content div.issue.details div.attributes div.attribute.start-date:first')
         .appendTo(splitcontentleft_left);
 
     // due date
-    $('#content div.attributes div.attribute.due-date:first')
+    $('#content div.issue.details div.attributes div.attribute.due-date:first')
         .appendTo(splitcontentleft_right);
 
     // actual start date
-    $('#content div.attributes div.attribute.cf_' + actual_start_date_cf_id +
-        ':first').appendTo(splitcontentleft_left);
+    $('#content div.issue.details div.attributes div.attribute.cf_' + 
+        actual_start_date_cf_id + ':first').appendTo(splitcontentleft_left);
 
     // actual end date
-    $('#content div.attributes div.attribute.cf_' + actual_end_date_cf_id +
-        ':first').appendTo(splitcontentleft_right);
+    $('#content div.issue.details div.attributes div.attribute.cf_' + 
+        actual_end_date_cf_id + ':first').appendTo(splitcontentleft_right);
 
     // estimated hours
     // $('#content div.attributes div.attribute.estimated-hours:first')

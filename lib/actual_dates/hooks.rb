@@ -15,6 +15,7 @@ module ActualDates
       if params[:controller] == 'gantts'
         view_layouts_base_html_head_gantts(context)
       elsif params[:controller] == 'issues'
+        return unless params[:action] == 'show'
         view_layouts_base_html_head_issues(context)
       end
 

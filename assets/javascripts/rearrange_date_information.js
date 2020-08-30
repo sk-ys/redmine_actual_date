@@ -20,9 +20,8 @@ $(function () {
     var splitcontentleft_left = splitcontent.children('.splitcontentleft:first');
     var splitcontentleft_right = splitcontent.children('.splitcontentleft:last');
 
-    target_issue_attributes.after('<hr>');
     target_issue_attributes.after(splitcontent);
-    target_issue_attributes.after('<hr>');
+
 
     // --- move elements ---
     // start date
@@ -34,16 +33,26 @@ $(function () {
         .appendTo(splitcontentleft_right);
 
     // actual start date
-    $('#content div.issue.details div.attributes div.attribute.cf_' + 
+    $('#content div.issue.details div.attributes div.attribute.cf_' +
         actual_start_date_cf_id + ':first').appendTo(splitcontentleft_left);
 
     // actual end date
-    $('#content div.issue.details div.attributes div.attribute.cf_' + 
+    $('#content div.issue.details div.attributes div.attribute.cf_' +
         actual_end_date_cf_id + ':first').appendTo(splitcontentleft_right);
 
     // estimated hours
     // $('#content div.attributes div.attribute.estimated-hours:first')
     //     .appendTo(splitcontentleft_left);
+
+    // add hr
+    var issue_attributes_content_last_text =
+        $('#content div.issue.details div.attributes>div.splitcontent:last')
+        .text();
+
+    splitcontent.before('<hr>');
+    if (issue_attributes_content_last_text !== '') {
+        splitcontent.after('<hr>');
+    }
 
 
     // === issue form ===

@@ -174,4 +174,20 @@ $(function () {
       'margin-top': actual_bar_height
     });
   }
+
+  var ganttEntryClickOriginal = ganttEntryClick;
+  ganttEntryClick = function(e){
+    ganttEntryClickOriginal(e);
+    $('#gantt_area .task_leaf_actual').each(function() {
+      var $elm = $(this);
+      var issue_id_tag = $elm.parent().data('collapse-expand');
+      if (
+          $('#gantt_area div.task.label[data-collapse-expand=' +
+            issue_id_tag +']:first').is(':visible')) {
+        $elm.show();
+      } else {
+        $elm.hide();
+      }
+    });
+  }
 });

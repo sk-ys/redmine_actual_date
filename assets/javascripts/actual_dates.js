@@ -2,18 +2,16 @@ $(function () {
 
   // --- search gantt bar ---
   var search_gantt_bar_ids = function() {
-    var get_issue_id = function (str) {
-      return str.split('-').pop()
-    }
-
     var gantt_bar_issue_ids = [];
-    $('#gantt_area div[id^="task-todo-issue-"]').each(
-      function (index, element) {
-        issue_id = get_issue_id($(element).attr('id'));
-        gantt_bar_issue_ids.push(issue_id);
+    $('#gantt_area div.task.label').each(
+      function (_, element) {
+        var tag = $(element).data('collapse-expand');
+        if (tag.split('-')[0] == 'issue') {
+          issue_id = tag.split('-').pop();
+          gantt_bar_issue_ids.push(issue_id);
+        }
       });
-
-    return gantt_bar_issue_ids
+    return gantt_bar_issue_ids;
   }
 
   var gantt_bar_issue_ids = search_gantt_bar_ids();
@@ -25,9 +23,12 @@ $(function () {
   // px = (days) x zoom
   var zoom_org = Number($('#zoom').attr('value'));
   if (zoom_org === undefined || isNaN(zoom_org)) { // is not gantt?
-    return
+    return;
   }
   var zoom = Math.pow(2, zoom_org);
+
+  const gantt_date_from = ActualDates['gantt_date_from'];
+  const gantt_date_to = ActualDates['gantt_date_to'];
 
   var load_bar_config = function (key, default_value) {
     try {
@@ -99,20 +100,43 @@ $(function () {
       end_date_actual = get_today_str();
     }
 
-    var width = diff_date(start_date_actual, end_date_actual);
+    if (Date.parse(start_date_actual) > Date.parse(gantt_date_to)) {
+      continue;
+    }
+
+    // bar width settings
+    var start_date_actual_display = start_date_actual;
+    if (Date.parse(start_date_actual) < Date.parse(gantt_date_from)) {
+      start_date_actual_display = gantt_date_from;
+    }
+
+    var end_date_actual_display = end_date_actual;
+    if (Date.parse(end_date_actual) > Date.parse(gantt_date_to)) {
+      end_date_actual_display = gantt_date_to;
+    }
+
+    var width = diff_date(start_date_actual_display, end_date_actual_display);
     // ignore irregular cases
     if (isNaN(width) || width < 0) {
       continue;
     }
     width += 1 // days = difference date + 1
 
-    try {
-      var left = diff_date(start_date_original, start_date_actual);
-    } catch (err) {
+    // bar left settings
+    var offset_date_original = diff_date(gantt_date_from, start_date_original);
+    var offset_date_actual = diff_date(gantt_date_from, start_date_actual);
+    if (offset_date_actual < 0) {
+      var left = 0;
+    } else {
+      var left = offset_date_actual;
+    }
+    if (offset_date_original > 0) {
+      left -= offset_date_original;
+    }
+    // ignore irregular cases
+    if (left < 0) {
       continue;
     }
-
-    // todo: if width is exceeded the gantt area
 
     // add actual bar element to div.tooltip
     var actual_bar = actual_bar_base.clone();
@@ -125,6 +149,24 @@ $(function () {
       '#gantt_area ' +
       'div.tooltip[data-collapse-expand="issue-' + issue_id + '"]' +
       ':first');
+
+    // if element is not found then create a new element
+    // TODO: tooltip is not visible
+    if (parent_task_tooltip.length == 0) {
+      var task_label = $(
+        '#gantt_area ' +
+        'div.task.label[data-collapse-expand="issue-' + issue_id + '"]' +
+        ':first');
+      parent_task_tooltip = $('<div />')
+        .css({
+          'top': task_label.css('top'),
+          'left': 0,
+          'position': 'absolute'
+        })
+        .attr('data-collapse-expand', task_label.data('collapse-expand'))
+        .attr('data-number-of-rows', task_label.data('number-of-rows'));
+      parent_task_tooltip.insertAfter(task_label);
+    }
     parent_task_tooltip.prepend(actual_bar);
 
     // update tooltip's style

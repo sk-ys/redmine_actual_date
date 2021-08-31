@@ -43,6 +43,9 @@ module ActualDates
         color: Setting.plugin_redmine_actual_date['actual_bar_color'],
         opacity: Setting.plugin_redmine_actual_date['actual_bar_opacity'],
       }
+      @gantt = context[:hook_caller].instance_variable_get(:@gantt)
+      context[:gantt_date_from] = @gantt.instance_variable_get(:@date_from)
+      context[:gantt_date_to] = @gantt.instance_variable_get(:@date_to)
       context[:hook_caller].send(:render, {
         partial: '/hooks/actual_dates/view_layouts_base_html_head_gantts',
         locals: context

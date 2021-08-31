@@ -4,6 +4,8 @@
     original_dates: <%= original_dates.to_json.html_safe %>,
     actual_dates: <%= actual_dates.to_json.html_safe %>,
     bar_settings: <%= bar_settings.to_json.html_safe %>,
+    gantt_date_from: <%= gantt_date_from.to_json.html_safe %>,
+    gantt_date_to: <%= gantt_date_to.to_json.html_safe %>,
   };
   //]]</script>
   <%= javascript_include_tag('actual_dates.js',

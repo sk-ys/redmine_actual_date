@@ -133,10 +133,6 @@ $(function () {
     if (offset_date_original > 0) {
       left -= offset_date_original;
     }
-    // ignore irregular cases
-    if (left < 0) {
-      continue;
-    }
 
     // add actual bar element to div.tooltip
     var actual_bar = actual_bar_base.clone();

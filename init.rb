@@ -1,4 +1,4 @@
-require 'actual_dates/hooks'
+require File.expand_path('../lib/actual_dates/hooks', __FILE__)
 Redmine::Plugin.register :redmine_actual_date do
   name 'Redmine Actual Date plugin'
   author 'sk-ys'

@@ -1,117 +1,140 @@
 $(function () {
-    // === common ===
-    // --- configuration ---
-    var actual_start_date_cf_id = ActualDates['cf_id']['start'];
-    var actual_end_date_cf_id = ActualDates['cf_id']['end'];
-    var label_date_information = ActualDates['label_date_information'];
+  // === common ===
+  // --- configuration ---
+  const actualStartDateCfId = ActualDates["cfId"]["start"];
+  const actualEndDateCfId = ActualDates["cfId"]["end"];
+  const labelDateInformation = ActualDates["labelDateInformation"];
 
+  // === issue attribute ===
+  // --- configuration ---
+  const $targetIssueAttributes = $(
+    "#content div.issue.details div.attributes>div.splitcontent:first"
+  );
+  const $splitcontentDateinfoStr =
+    "" +
+    '<div class="splitcontent">' +
+    '<div class="splitcontentleft"></div>' +
+    '<div class="splitcontentleft"></div>' +
+    "</div>";
 
-    // === issue attribute ===
-    // --- configuration ---
-    var target_issue_attributes =
-        $('#content div.issue.details div.attributes>div.splitcontent:first');
-    var splitcontent_dateinfo_str = '';
-    splitcontent_dateinfo_str += '<div class="splitcontent">';
-    splitcontent_dateinfo_str += '<div class="splitcontentleft"></div>';
-    splitcontent_dateinfo_str += '<div class="splitcontentleft"></div>';
-    splitcontent_dateinfo_str += '</div>';
+  const $splitcontent = $($splitcontentDateinfoStr);
+  const $splitcontentleftLeft = $splitcontent.children(
+    ".splitcontentleft:first"
+  );
+  const $splitcontentleftRight = $splitcontent.children(
+    ".splitcontentleft:last"
+  );
 
-    var splitcontent = $(splitcontent_dateinfo_str);
-    var splitcontentleft_left = splitcontent.children('.splitcontentleft:first');
-    var splitcontentleft_right = splitcontent.children('.splitcontentleft:last');
+  $targetIssueAttributes.after($splitcontent);
 
-    target_issue_attributes.after(splitcontent);
+  // --- move elements ---
+  // start date
+  $(
+    "#content div.issue.details div.attributes div.attribute.start-date:first"
+  ).appendTo($splitcontentleftLeft);
 
+  // due date
+  $(
+    "#content div.issue.details div.attributes div.attribute.due-date:first"
+  ).appendTo($splitcontentleftRight);
+
+  // actual start date
+  $(
+    "#content div.issue.details div.attributes div.attribute.cf_" +
+      actualStartDateCfId +
+      ":first"
+  ).appendTo($splitcontentleftLeft);
+
+  // actual end date
+  $(
+    "#content div.issue.details div.attributes div.attribute.cf_" +
+      actualEndDateCfId +
+      ":first"
+  ).appendTo($splitcontentleftRight);
+
+  // estimated hours
+  // $('#content div.attributes div.attribute.estimated-hours:first')
+  //     .appendTo(splitcontentleft_left);
+
+  // add hr
+  var issue_attributes_content_last_text = $(
+    "#content div.issue.details div.attributes>div.splitcontent:last"
+  ).text();
+
+  $splitcontent.before("<hr>");
+  if (issue_attributes_content_last_text !== "") {
+    $splitcontent.after("<hr>");
+  }
+
+  // === issue form ===
+  // --- configuration ---
+  const $targetIssueFormFieldset = $("#issue-form fieldset:first");
+
+  const fieldsetDateInfoStr =
+    '<fieldset class="tabular dateinfo">' +
+    "<legend>" +
+    labelDateInformation +
+    "</legend>" +
+    ' <div class="splitcontent">' +
+    ' <div class="splitcontentleft">' +
+    " </div>" +
+    ' <div class="splitcontentright">' +
+    " </div>" +
+    " </div>" +
+    "</fieldset>";
+
+  function moveElements() {
+    $("#issue-form fieldset.dateinfo").remove();
+
+    // define fileldset and splitcontent
+    const $fieldsetDateInfo = $(fieldsetDateInfoStr);
+    const $splitcontentLeft = $fieldsetDateInfo
+      .children("div.splitcontent")
+      .children("div.splitcontentleft");
+    const splitcontentrRight = $fieldsetDateInfo
+      .children("div.splitcontent")
+      .children("div.splitcontentright");
+
+    // add new filedset
+    $targetIssueFormFieldset.after($fieldsetDateInfo);
 
     // --- move elements ---
     // start date
-    $('#content div.issue.details div.attributes div.attribute.start-date:first')
-        .appendTo(splitcontentleft_left);
+    $("#start_date_area").appendTo($splitcontentLeft);
 
     // due date
-    $('#content div.issue.details div.attributes div.attribute.due-date:first')
-        .appendTo(splitcontentleft_right);
+    $("#due_date_area").appendTo(splitcontentrRight);
 
     // actual start date
-    $('#content div.issue.details div.attributes div.attribute.cf_' +
-        actual_start_date_cf_id + ':first').appendTo(splitcontentleft_left);
+    $(
+      "#issue-form label[for=issue_custom_field_values_" +
+        actualStartDateCfId +
+        "]:first"
+    )
+      .parent()
+      .appendTo($splitcontentLeft);
 
     // actual end date
-    $('#content div.issue.details div.attributes div.attribute.cf_' +
-        actual_end_date_cf_id + ':first').appendTo(splitcontentleft_right);
+    $(
+      "#issue-form label[for=issue_custom_field_values_" +
+        actualEndDateCfId +
+        "]:first"
+    )
+      .parent()
+      .appendTo(splitcontentrRight);
 
     // estimated hours
-    // $('#content div.attributes div.attribute.estimated-hours:first')
-    //     .appendTo(splitcontentleft_left);
+    // $('#issue-form label[for=issue_estimated_hours]:first').parent()
+    //     .appendTo(splitcontentleft);
+  }
 
-    // add hr
-    var issue_attributes_content_last_text =
-        $('#content div.issue.details div.attributes>div.splitcontent:last')
-        .text();
+  // initial invoke
+  moveElements();
 
-    splitcontent.before('<hr>');
-    if (issue_attributes_content_last_text !== '') {
-        splitcontent.after('<hr>');
-    }
-
-
-    // === issue form ===
-    // --- configuration ---
-    var target_issue_form_fieldset = $('#issue-form fieldset:first');
-
-    var fieldset_dateinfo_str = '';
-    fieldset_dateinfo_str += '<fieldset class="tabular dateinfo">';
-    fieldset_dateinfo_str += '<legend>' + label_date_information + '</legend>';
-    fieldset_dateinfo_str += ' <div class="splitcontent">';
-    fieldset_dateinfo_str += ' <div class="splitcontentleft">';
-    fieldset_dateinfo_str += ' </div>';
-    fieldset_dateinfo_str += ' <div class="splitcontentright">';
-    fieldset_dateinfo_str += ' </div>';
-    fieldset_dateinfo_str += ' </div>';
-    fieldset_dateinfo_str += '</fieldset>';
-
-    var move_elements = function () {
-        $('#issue-form fieldset.dateinfo').remove();
-
-        // define fileldset and splitcontent
-        var fieldset_dateinfo = $(fieldset_dateinfo_str);
-        var splitcontentleft = fieldset_dateinfo
-            .children('div.splitcontent').children('div.splitcontentleft');
-        var splitcontentright = fieldset_dateinfo
-            .children('div.splitcontent').children('div.splitcontentright');
-
-        // add new filedset
-        target_issue_form_fieldset.after(fieldset_dateinfo);
-
-        // --- move elements ---
-        // start date
-        $('#start_date_area').appendTo(splitcontentleft);
-
-        // due date
-        $('#due_date_area').appendTo(splitcontentright);
-
-        // actual start date
-        $('#issue-form label[for=issue_custom_field_values_' +
-            actual_start_date_cf_id + ']:first').parent()
-            .appendTo(splitcontentleft);
-
-        // actual end date
-        $('#issue-form label[for=issue_custom_field_values_' +
-            actual_end_date_cf_id + ']:first').parent()
-            .appendTo(splitcontentright);
-
-        // estimated hours
-        // $('#issue-form label[for=issue_estimated_hours]:first').parent()
-        //     .appendTo(splitcontentleft);
-    }
-
-    // initial invoke
-    move_elements();
-
-    // override original function
-    var _replaceIssueFormWith = replaceIssueFormWith;
-    replaceIssueFormWith = function (html) {
-        _replaceIssueFormWith(html);
-        move_elements();
-    };
+  // override original function
+  var replaceIssueFormWithOrg = replaceIssueFormWith;
+  replaceIssueFormWith = function (html) {
+    replaceIssueFormWithOrg(html);
+    moveElements();
+  };
 });

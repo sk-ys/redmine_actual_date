@@ -1,189 +1,201 @@
 $(function () {
+  if (!/issues\/gantt(|\/)$/.test(location.pathname)) return;
 
   // --- search gantt bar ---
-  var search_gantt_bar_ids = function() {
-    var gantt_bar_issue_ids = [];
-    $('#gantt_area div.task.label').each(
-      function (_, element) {
-        var tag = $(element).data('collapse-expand');
-        if (tag.split('-')[0] == 'issue') {
-          issue_id = tag.split('-').pop();
-          gantt_bar_issue_ids.push(issue_id);
-        }
-      });
-    return gantt_bar_issue_ids;
+  function searchGanttBarIds() {
+    const ganttBarIssueIds = [];
+    $("#gantt_area div.task.label").each(function (_, element) {
+      var tag = $(element).data("collapse-expand");
+      if (tag.split("-")[0] == "issue") {
+        issueId = tag.split("-").pop();
+        ganttBarIssueIds.push(issueId);
+      }
+    });
+    return ganttBarIssueIds;
   }
 
-  var gantt_bar_issue_ids = search_gantt_bar_ids();
-  if (gantt_bar_issue_ids.length == 0) {
-    return // abort if no object is found.
+  const ganttBarIssueIds = searchGanttBarIds();
+  if (ganttBarIssueIds.length == 0) {
+    return; // abort if no object is found.
   }
 
   // --- config ---
   // px = (days) x zoom
-  var zoom_org = Number($('#zoom').attr('value'));
-  if (zoom_org === undefined || isNaN(zoom_org)) { // is not gantt?
+  const zoomOrg = Number($("#zoom").attr("value"));
+  if (zoomOrg === undefined || isNaN(zoomOrg)) {
+    // is not gantt?
     return;
   }
-  var zoom = Math.pow(2, zoom_org);
+  const zoom = Math.pow(2, zoomOrg);
 
-  const gantt_date_from = ActualDates['gantt_date_from'];
-  const gantt_date_to = ActualDates['gantt_date_to'];
+  const ganttDateFrom = ActualDates["ganttDateFrom"];
+  const ganttDateTo = ActualDates["ganttDateTo"];
 
-  var load_bar_config = function (key, default_value) {
+  function loadBarConfig(key, defaultValue) {
     try {
-      var value = ActualDates['bar_settings'][key];
+      return ActualDates["barSettings"][key];
     } catch (error) {
-      var value = default_value;
+      return defaultValue;
     }
-    return value;
   }
 
   // Note: original task bar = {height: 8px, border: 1px}
-  var actual_bar_top = load_bar_config('top', 10) + 'px';
-  var actual_bar_height = load_bar_config('height', 5) + 'px';
-  var actual_bar_color = load_bar_config('color', '#ff9800');
-  var actual_bar_opacity = load_bar_config('opacity', 0.6);
+  const actualBarTop = loadBarConfig("top", 10) + "px";
+  const actualBarHeight = loadBarConfig("height", 5) + "px";
+  const actualBarColor = loadBarConfig("color", "#ff9800");
+  const actualBarOpacity = loadBarConfig("opacity", 0.6);
 
-  var actual_bar_base = $('<div class="task_leaf_actual">&nbsp;</div>')
-  actual_bar_base.css({
-    position: 'absolute',
-    backgroundColor: actual_bar_color,
-    top: actual_bar_top,
-    height: actual_bar_height,
-    opacity: actual_bar_opacity,
-  })
+  const $actualBarBase = $('<div class="task_leaf_actual">&nbsp;</div>');
+  $actualBarBase.css({
+    position: "absolute",
+    backgroundColor: actualBarColor,
+    top: actualBarTop,
+    height: actualBarHeight,
+    opacity: actualBarOpacity,
+  });
 
   // --- define functions ---
-  var diff_date = function (start_date_str, end_date_str) {
-    return (Date.parse(end_date_str) - Date.parse(start_date_str)) /
-      24 / 60 / 60 / 1000;
+  function diffDate(startDateStr, endDateStr) {
+    return (
+      (Date.parse(endDateStr) - Date.parse(startDateStr)) / 24 / 60 / 60 / 1000
+    );
   }
 
-  var get_today_str = function () {
+  function getTodayStr() {
     var today = new Date();
     var month = today.getMonth() + 1;
     if (month < 10) {
-      month = '0' + month;
+      month = "0" + month;
     }
     var date = today.getDate();
     if (date < 10) {
-      date = '0' + date;
+      date = "0" + date;
     }
-    return today.getFullYear() + '-' + month + '-' + date;
+    return today.getFullYear() + "-" + month + "-" + date;
   }
 
   // --- add actual bar ---
-  for (var i = 0; i < gantt_bar_issue_ids.length; i++) {
-    var issue_id = gantt_bar_issue_ids[i];
+  for (let i = 0; i < ganttBarIssueIds.length; i++) {
+    const issueId = ganttBarIssueIds[i];
 
-    var actual_dates = ActualDates['actual_dates'][issue_id];
-    if (actual_dates === undefined) {
+    const actualDates = ActualDates["actualDates"][issueId];
+    if (actualDates === undefined) {
       continue;
     }
 
-    var start_date_original = ActualDates['original_dates'][issue_id]['start'];
-    var start_date_actual = actual_dates['start'];
-    var end_date_actual = actual_dates['end'];
+    const startDateOriginal = ActualDates["originalDates"][issueId]["start"];
+    let startDateActual = actualDates["start"];
+    let endDateActual = actualDates["end"];
 
     if (
-      (start_date_actual === undefined || start_date_actual === '') &&
-      (end_date_actual === undefined || end_date_actual === '')) {
+      (startDateActual === undefined || startDateActual === "") &&
+      (endDateActual === undefined || endDateActual === "")
+    ) {
       continue;
     }
 
-    if (start_date_actual === undefined || start_date_actual === '') {
-      start_date_actual = get_today_str();
+    if (startDateActual === undefined || startDateActual === "") {
+      startDateActual = getTodayStr();
     }
 
-    if (end_date_actual === undefined || end_date_actual === '') {
-      end_date_actual = get_today_str();
+    if (endDateActual === undefined || endDateActual === "") {
+      endDateActual = getTodayStr();
     }
 
-    if (Date.parse(start_date_actual) > Date.parse(gantt_date_to)) {
+    if (Date.parse(startDateActual) > Date.parse(ganttDateTo)) {
       continue;
     }
 
     // bar width settings
-    var start_date_actual_display = start_date_actual;
-    if (Date.parse(start_date_actual) < Date.parse(gantt_date_from)) {
-      start_date_actual_display = gantt_date_from;
+    let startDateActualDisplay = startDateActual;
+    if (Date.parse(startDateActual) < Date.parse(ganttDateFrom)) {
+      startDateActualDisplay = ganttDateFrom;
     }
 
-    var end_date_actual_display = end_date_actual;
-    if (Date.parse(end_date_actual) > Date.parse(gantt_date_to)) {
-      end_date_actual_display = gantt_date_to;
+    let endDateActualDisplay = endDateActual;
+    if (Date.parse(endDateActual) > Date.parse(ganttDateTo)) {
+      endDateActualDisplay = ganttDateTo;
     }
 
-    var width = diff_date(start_date_actual_display, end_date_actual_display);
+    let width = diffDate(startDateActualDisplay, endDateActualDisplay);
     // ignore irregular cases
     if (isNaN(width) || width < 0) {
       continue;
     }
-    width += 1 // days = difference date + 1
+    width += 1; // days = difference date + 1
 
     // bar left settings
-    var offset_date_original = diff_date(gantt_date_from, start_date_original);
-    var offset_date_actual = diff_date(gantt_date_from, start_date_actual);
-    if (offset_date_actual < 0) {
+    const offsetDateOriginal = diffDate(ganttDateFrom, startDateOriginal);
+    const offsetDateActual = diffDate(ganttDateFrom, startDateActual);
+    if (offsetDateActual < 0) {
       var left = 0;
     } else {
-      var left = offset_date_actual;
+      var left = offsetDateActual;
     }
-    if (offset_date_original > 0) {
-      left -= offset_date_original;
+    if (offsetDateOriginal > 0) {
+      left -= offsetDateOriginal;
     }
 
     // add actual bar element to div.tooltip
-    var actual_bar = actual_bar_base.clone();
-    actual_bar.css({
+    const $actualBar = $actualBarBase.clone();
+    $actualBar.css({
       left: left * zoom,
       width: width * zoom,
-    })
+    });
 
-    var parent_task_tooltip = $(
-      '#gantt_area ' +
-      'div.tooltip[data-collapse-expand="issue-' + issue_id + '"]' +
-      ':first');
+    let $parentTaskTooltip = $(
+      "#gantt_area " +
+        'div.tooltip[data-collapse-expand="issue-' +
+        issueId +
+        '"]' +
+        ":first"
+    );
 
     // if element is not found then create a new element
     // TODO: tooltip is not visible
-    if (parent_task_tooltip.length == 0) {
-      var task_label = $(
-        '#gantt_area ' +
-        'div.task.label[data-collapse-expand="issue-' + issue_id + '"]' +
-        ':first');
-      parent_task_tooltip = $('<div />')
+    if ($parentTaskTooltip.length == 0) {
+      const $taskLabel = $(
+        "#gantt_area " +
+          'div.task.label[data-collapse-expand="issue-' +
+          issueId +
+          '"]' +
+          ":first"
+      );
+      $parentTaskTooltip = $("<div />")
         .css({
-          'top': task_label.css('top'),
-          'left': 0,
-          'position': 'absolute'
+          top: $taskLabel.css("top"),
+          left: 0,
+          position: "absolute",
         })
-        .attr('data-collapse-expand', task_label.data('collapse-expand'))
-        .attr('data-number-of-rows', task_label.data('number-of-rows'));
-      parent_task_tooltip.insertAfter(task_label);
+        .attr("data-collapse-expand", $taskLabel.data("collapse-expand"))
+        .attr("data-number-of-rows", $taskLabel.data("number-of-rows"));
+      $parentTaskTooltip.insertAfter($taskLabel);
     }
-    parent_task_tooltip.prepend(actual_bar);
+    $parentTaskTooltip.prepend($actualBar);
 
     // update tooltip's style
-    parent_task_tooltip.children('span.tip').css({
-      'margin-top': actual_bar_height
+    $parentTaskTooltip.children("span.tip").css({
+      "margin-top": actualBarHeight,
     });
   }
 
-  var ganttEntryClickOriginal = ganttEntryClick;
-  ganttEntryClick = function(e){
+  const ganttEntryClickOriginal = ganttEntryClick;
+  ganttEntryClick = function (e) {
     ganttEntryClickOriginal(e);
-    $('#gantt_area .task_leaf_actual').each(function() {
-      var $elm = $(this);
-      var issue_id_tag = $elm.parent().data('collapse-expand');
+    $("#gantt_area .task_leaf_actual").each(function () {
+      const $elm = $(this);
+      const issueIdTag = $elm.parent().data("collapse-expand");
       if (
-          $('#gantt_area div.task.label[data-collapse-expand=' +
-            issue_id_tag +']:first').is(':visible')) {
+        $(
+          "#gantt_area div.task.label[data-collapse-expand=" +
+            issueIdTag +
+            "]:first"
+        ).is(":visible")
+      ) {
         $elm.show();
       } else {
         $elm.hide();
       }
     });
-  }
+  };
 });

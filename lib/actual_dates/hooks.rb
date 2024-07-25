@@ -15,7 +15,7 @@ module ActualDates
       if params[:controller] == 'gantts'
         view_layouts_base_html_head_gantts(context)
       elsif params[:controller] == 'issues'
-        return unless ['show', 'new'].include? params[:action]
+        return unless ['show', 'new', 'create'].include? params[:action]
         context[:action] = params[:action]
         view_layouts_base_html_head_issues(context)
       end

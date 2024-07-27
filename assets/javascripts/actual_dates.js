@@ -32,30 +32,26 @@ $(function () {
     const ganttDateFrom = ActualDates["ganttDateFrom"];
     const ganttDateTo = ActualDates["ganttDateTo"];
 
-    function loadBarConfig(key, defaultValue) {
-      try {
-        return ActualDates["barSettings"][key];
-      } catch (error) {
-        return defaultValue;
-      }
-    }
+    const actualBarBaseStyle = {
+      top: 10,
+      height: 5,
+      color: "#ff9800",
+      opacity: 0.6,
+    };
 
     // Note: original task bar = {height: 8px, border: 1px}
-    const actualBarTop = loadBarConfig("top", 10) + "px";
-    const actualBarHeight = loadBarConfig("height", 5) + "px";
-    const actualBarColor = loadBarConfig("color", "#ff9800");
-    const actualBarOpacity = loadBarConfig("opacity", 0.6);
+    const actualBarStyle = {
+      ...actualBarBaseStyle,
+      ...ActualDates["barSettings"],
+    };
 
-    const $actualBarBase = $('<div class="task_leaf_actual">&nbsp;</div>');
-    $actualBarBase.css({
-      position: "absolute",
-      backgroundColor: actualBarColor,
-      top: actualBarTop,
-      height: actualBarHeight,
-      opacity: actualBarOpacity,
+    // convert string to number
+    Object.entries(actualBarStyle).forEach(([k, v]) => {
+      const numberValue = Number(v);
+      if (!isNaN(numberValue)) actualBarStyle[k] = numberValue;
     });
 
-    // --- define functions ---
+    // --- define helper functions ---
     function diffDate(startDateStr, endDateStr) {
       return (
         (Date.parse(endDateStr) - Date.parse(startDateStr)) /
@@ -142,11 +138,24 @@ $(function () {
       }
 
       // add actual bar element to div.tooltip
-      const $actualBar = $actualBarBase.clone();
-      $actualBar.css({
-        left: left * zoom,
-        width: width * zoom,
-      });
+      const $actualBarBase = $("<div/>")
+        .addClass("task_leaf_actual")
+        .css({
+          position: "absolute",
+          top: actualBarStyle.top,
+          left: left * zoom,
+          paddingBottom: 2,
+        });
+
+      const $actualBar = $("<div/>");
+      $actualBar
+        .css({
+          height: actualBarStyle.height,
+          width: width * zoom,
+          backgroundColor: actualBarStyle.color,
+          opacity: actualBarStyle.opacity,
+        })
+        .appendTo($actualBarBase);
 
       let $parentTaskTooltip = $(
         "#gantt_area " +
@@ -176,11 +185,15 @@ $(function () {
           .attr("data-number-of-rows", $taskLabel.data("number-of-rows"));
         $parentTaskTooltip.insertAfter($taskLabel);
       }
-      $parentTaskTooltip.prepend($actualBar);
+      $parentTaskTooltip.prepend($actualBarBase);
 
       // update tooltip's style
       $parentTaskTooltip.children("span.tip").css({
-        "margin-top": actualBarHeight,
+        "margin-top":
+          2 +
+          actualBarStyle.top +
+          actualBarStyle.height -
+          $parentTaskTooltip.height(),
       });
     }
   }

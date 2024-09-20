@@ -207,23 +207,36 @@ $(function () {
     });
   }).observe($("table.gantt-table")[0], { childList: true });
 
+  function isVisible(elem) {
+    return elem.offsetWidth > 0 || elem.offsetHeight > 0;
+  }
+
+  class TaskState {
+    constructor(elem) {
+      this.elem = elem;
+      this.issueIdTag = elem.parentNode.dataset.collapseExpand;
+      this.taskIsVisible = isVisible(
+        document.querySelector(
+          "#gantt_area div.task.label[data-collapse-expand=" +
+            this.issueIdTag +
+            "]"
+        )
+      );
+    }
+  }
+  
   const ganttEntryClickOriginal = ganttEntryClick;
   ganttEntryClick = function (e) {
     ganttEntryClickOriginal(e);
-    $("#gantt_area .task_leaf_actual").each(function () {
-      const $elm = $(this);
-      const issueIdTag = $elm.parent().data("collapse-expand");
-      if (
-        $(
-          "#gantt_area div.task.label[data-collapse-expand=" +
-            issueIdTag +
-            "]:first"
-        ).is(":visible")
-      ) {
-        $elm.show();
-      } else {
-        $elm.hide();
-      }
+
+    // Read current state
+    const currentState = [
+      ...document.querySelectorAll("#gantt_area .task_leaf_actual"),
+    ].map((elem) => new TaskState(elem));
+
+    // Set new state
+    currentState.forEach((item) => {
+      item.elem.style.display = item.taskIsVisible ? "" : "none";
     });
   };
 });

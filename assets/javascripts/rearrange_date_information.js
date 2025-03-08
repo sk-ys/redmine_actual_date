@@ -1,6 +1,7 @@
 $(function () {
   // === common ===
   // --- configuration ---
+  const ActualDates = JSON.parse($("#actual_dates_data").text());
   const actualStartDateCfId = ActualDates["cfId"]["start"];
   const actualEndDateCfId = ActualDates["cfId"]["end"];
   const labelDateInformation = ActualDates["labelDateInformation"];

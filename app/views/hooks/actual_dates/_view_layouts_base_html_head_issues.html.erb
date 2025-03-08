@@ -1,13 +1,14 @@
 <% content_for :header_tags do %>
-  <script type="text/javascript">//<![CDATA[
-  let ActualDates = {
-    cfId: {
-      start: <%= actual_start_date_cf_id %>,
-      end: <%= actual_end_date_cf_id %>,
-    },
-    labelDateInformation: '<%= l(:label_date_information) %>',
-  };
-  //]]</script>
+  <script type="application/json" id="actual_dates_data">
+  <%= raw({
+        cfId: {
+          start: actual_start_date_cf_id,
+          end: actual_end_date_cf_id,
+        },
+        labelDateInformation: l(:label_date_information)
+      }.to_json)
+  %>
+  </script>
 
   <% if action == 'show' %>
     <%= javascript_include_tag('rearrange_date_information.js',

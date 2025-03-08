@@ -1,13 +1,14 @@
 <% content_for :header_tags do %>
-  <script type="text/javascript">//<![CDATA[
-  let ActualDates = {
-    originalDates: <%= original_dates.to_json.html_safe %>,
-    actualDates: <%= actual_dates.to_json.html_safe %>,
-    barSettings: <%= bar_settings.to_json.html_safe %>,
-    ganttDateFrom: <%= gantt_date_from.to_json.html_safe %>,
-    ganttDateTo: <%= gantt_date_to.to_json.html_safe %>,
-  };
-  //]]</script>
+<script type="application/json" id="actual_dates_data">
+  <%= raw({ 
+        originalDates: original_dates, 
+        actualDates: actual_dates, 
+        barSettings: bar_settings, 
+        ganttDateFrom: gantt_date_from,
+        ganttDateTo: gantt_date_to
+      }.to_json)
+  %>
+</script>
   <%= javascript_include_tag('actual_dates.js',
                              plugin: 'redmine_actual_date') %>
 <% end %>

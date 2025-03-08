@@ -1,3 +1,5 @@
+var RedmineActualDate = {};
+
 $(function () {
   if (!/issues\/gantt(|\/)$/.test(location.pathname)) return;
 
@@ -14,12 +16,29 @@ $(function () {
     return ganttBarIssueIds;
   }
 
-  const ganttBarIssueIds = searchGanttBarIds();
-  if (ganttBarIssueIds.length == 0) {
-    return; // abort if no object is found.
-  }
+  RedmineActualDate.getData = function () {
+    try {
+      return JSON.parse($("#actual_dates_data").text());
+    } catch (e) {
+      console.error("Failed to parse actual_dates_data:", e);
+      return null;
+    }
+  };
 
-  function setupActualDates() {
+  RedmineActualDate.removeActualDates = function () {
+    $(".task_leaf_actual").remove();
+  };
+
+  RedmineActualDate.applyActualDates = function () {
+    RedmineActualDate.removeActualDates();
+
+    const ganttBarIssueIds = searchGanttBarIds();
+    if (ganttBarIssueIds.length == 0) {
+      return; // abort if no object is found.
+    }
+
+    const ActualDates = RedmineActualDate.getData();
+
     // --- config ---
     // px = (days) x zoom
     const zoomOrg = Number($("#zoom").attr("value"));
@@ -196,13 +215,13 @@ $(function () {
           $parentTaskTooltip.height(),
       });
     }
-  }
-  setupActualDates();
+  };
+  RedmineActualDate.applyActualDates();
 
   new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       if (mutation.addedNodes.length > 0) {
-        setupActualDates();
+        RedmineActualDate.applyActualDates();
       }
     });
   }).observe($("table.gantt-table")[0], { childList: true });
@@ -224,7 +243,7 @@ $(function () {
       );
     }
   }
-  
+
   const ganttEntryClickOriginal = ganttEntryClick;
   ganttEntryClick = function (e) {
     ganttEntryClickOriginal(e);

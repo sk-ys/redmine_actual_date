@@ -1,145 +1,107 @@
 $(function () {
-  // === common ===
-  // --- configuration ---
   const ActualDates = JSON.parse($("#actual_dates_data").text());
   const actualStartDateCfId = ActualDates["cfId"]["start"];
   const actualEndDateCfId = ActualDates["cfId"]["end"];
   const labelDateInformation = ActualDates["labelDateInformation"];
 
-  // === issue attribute ===
-  // --- configuration ---
-  const targetIssueAttributesSelector =
-    "#content div.issue.details div.attributes>div.splitcontent:first";
-  const splitcontentDateinfoStr =
-    "" +
-    '<div class="splitcontent">' +
-    '<div class="splitcontentleft"></div>' +
-    '<div class="splitcontentleft"></div>' +
-    "</div>";
+  function generateSplitcontentTemplate() {
+    const $splitcontentLeft = $("<div>").addClass("splitcontentleft");
+    const $splitcontentRight = $("<div>").addClass("splitcontentright");
+    const $splitcontent = $("<div>")
+      .addClass("splitcontent")
+      .append($splitcontentLeft)
+      .append($splitcontentRight);
 
-  function moveElementsForView() {
-    const $targetIssueAttributes = $(targetIssueAttributesSelector);
-    const $splitcontent = $(splitcontentDateinfoStr);
-    const $splitcontentleftLeft = $splitcontent.children(
-      ".splitcontentleft:first"
+    return { $splitcontent, $splitcontentLeft, $splitcontentRight };
+  }
+
+  function generateFieldSetTemplate(legend) {
+    const { $splitcontent, $splitcontentLeft, $splitcontentRight } =
+      generateSplitcontentTemplate();
+    const $fieldset = $("<fieldset>")
+      .addClass("tabular dateinfo")
+      .append($("<legend>").text(legend))
+      .append($splitcontent);
+    return { $fieldset, $splitcontentLeft, $splitcontentRight };
+  }
+
+  function reorganizeIssueView() {
+    const $issueAttributes = $("#content div.issue.details div.attributes");
+    const $insertTarget = $issueAttributes.find("div.splitcontent:first");
+    const {
+      $splitcontent: $dateInfoSplitcontent,
+      $splitcontentLeft,
+      $splitcontentRight,
+    } = generateSplitcontentTemplate();
+
+    // Define view elements to move
+    const $actualStartDateField = $issueAttributes.find(
+      "div.attribute.cf_" + actualStartDateCfId
     );
-    const $splitcontentleftRight = $splitcontent.children(
-      ".splitcontentleft:last"
+    const $actualEndDateField = $issueAttributes.find(
+      "div.attribute.cf_" + actualEndDateCfId
     );
 
-    $targetIssueAttributes.after($splitcontent);
+    // Move elements
+    $splitcontentLeft
+      .append($issueAttributes.find("div.attribute.start-date"))
+      .append($actualStartDateField);
+    $splitcontentRight
+      .append($issueAttributes.find("div.attribute.due-date"))
+      .append($actualEndDateField);
 
-    // --- move elements ---
-    // start date
-    $(
-      "#content div.issue.details div.attributes div.attribute.start-date:first"
-    ).appendTo($splitcontentleftLeft);
+    // Insert new splitcontent to the issue attributes
+    $insertTarget.after($dateInfoSplitcontent);
 
-    // due date
-    $(
-      "#content div.issue.details div.attributes div.attribute.due-date:first"
-    ).appendTo($splitcontentleftRight);
-
-    // actual start date
-    $(
-      "#content div.issue.details div.attributes div.attribute.cf_" +
-        actualStartDateCfId +
-        ":first"
-    ).appendTo($splitcontentleftLeft);
-
-    // actual end date
-    $(
-      "#content div.issue.details div.attributes div.attribute.cf_" +
-        actualEndDateCfId +
-        ":first"
-    ).appendTo($splitcontentleftRight);
-
-    // estimated hours
-    // $('#content div.attributes div.attribute.estimated-hours:first')
-    //     .appendTo(splitcontentleft_left);
-
-    // add hr
-    var issue_attributes_content_last_text = $(
-      "#content div.issue.details div.attributes>div.splitcontent:last"
-    ).text();
-
-    $splitcontent.before("<hr>");
-    if (issue_attributes_content_last_text !== "") {
-      $splitcontent.after("<hr>");
+    // Add hr
+    $dateInfoSplitcontent.before("<hr>");
+    if ($dateInfoSplitcontent.nextAll(".splitcontent").length > 0) {
+      $dateInfoSplitcontent.after("<hr>");
     }
   }
 
-  // === issue form ===
-  // --- configuration ---
-  const $targetIssueFormFieldset = $("#issue-form fieldset:first");
+  function reorganizeIssueForm() {
+    const $issueForm = $("#issue-form");
+    const $insertTarget = $issueForm.find("fieldset:first");
 
-  const fieldsetDateInfoStr =
-    '<fieldset class="tabular dateinfo">' +
-    "<legend>" +
-    labelDateInformation +
-    "</legend>" +
-    ' <div class="splitcontent">' +
-    ' <div class="splitcontentleft">' +
-    " </div>" +
-    ' <div class="splitcontentright">' +
-    " </div>" +
-    " </div>" +
-    "</fieldset>";
+    // Generate fieldset and splitcontent
+    const {
+      $fieldset: $fieldsetDateInfo,
+      $splitcontentLeft,
+      $splitcontentRight,
+    } = generateFieldSetTemplate(labelDateInformation);
 
-  function moveElementsForEdit() {
+    // Define form elements to move
+    const $actualStartDateForm = $issueForm
+      .find("label[for=issue_custom_field_values_" + actualStartDateCfId + "]")
+      .parent();
+
+    const $actualEndDateForm = $issueForm
+      .find("label[for=issue_custom_field_values_" + actualEndDateCfId + "]")
+      .parent();
+
+    // Move elements
+    $splitcontentLeft
+      .append($("#start_date_area"))
+      .append($actualStartDateForm);
+    $splitcontentRight.append($("#due_date_area")).append($actualEndDateForm);
+
+    // Remove old dateinfo fieldset if exists
     $("#issue-form fieldset.dateinfo").remove();
 
-    // define fileldset and splitcontent
-    const $fieldsetDateInfo = $(fieldsetDateInfoStr);
-    const $splitcontentLeft = $fieldsetDateInfo
-      .children("div.splitcontent")
-      .children("div.splitcontentleft");
-    const splitcontentrRight = $fieldsetDateInfo
-      .children("div.splitcontent")
-      .children("div.splitcontentright");
-
-    // add new filedset
-    $targetIssueFormFieldset.after($fieldsetDateInfo);
-
-    // --- move elements ---
-    // start date
-    $("#start_date_area").appendTo($splitcontentLeft);
-
-    // due date
-    $("#due_date_area").appendTo(splitcontentrRight);
-
-    // actual start date
-    $(
-      "#issue-form label[for=issue_custom_field_values_" +
-        actualStartDateCfId +
-        "]:first"
-    )
-      .parent()
-      .appendTo($splitcontentLeft);
-
-    // actual end date
-    $(
-      "#issue-form label[for=issue_custom_field_values_" +
-        actualEndDateCfId +
-        "]:first"
-    )
-      .parent()
-      .appendTo(splitcontentrRight);
-
-    // estimated hours
-    // $('#issue-form label[for=issue_estimated_hours]:first').parent()
-    //     .appendTo(splitcontentleft);
+    // Append new filedset to the form
+    $insertTarget.after($fieldsetDateInfo);
   }
 
-  // initial invoke
-  moveElementsForView();
-  moveElementsForEdit();
+  // Initial invoke
+  reorganizeIssueView();
+  reorganizeIssueForm();
 
-  // override original function
+  // Override the original function
   var replaceIssueFormWithOrg = replaceIssueFormWith;
   replaceIssueFormWith = function (html) {
     replaceIssueFormWithOrg(html);
-    moveElementsForEdit();
+    reorganizeIssueForm();
   };
 
   /**
@@ -159,7 +121,7 @@ $(function () {
                 node.nodeType === Node.ELEMENT_NODE &&
                 $(node).is("div.issue.details")
               ) {
-                moveElementsForView();
+                reorganizeIssueView();
               }
             });
           }

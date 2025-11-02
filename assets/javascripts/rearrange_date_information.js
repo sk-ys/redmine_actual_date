@@ -3,6 +3,10 @@ $(function () {
   const actualStartDateCfId = ActualDates["cfId"]["start"];
   const actualEndDateCfId = ActualDates["cfId"]["end"];
   const labelDateInformation = ActualDates["labelDateInformation"];
+  const isNewForm = ["controller-issues", "action-new"].every((c) =>
+    $("body").hasClass(c)
+  );
+  const isEditable = $("#update").length !== 0;
 
   function generateSplitcontentTemplate() {
     const $splitcontentLeft = $("<div>").addClass("splitcontentleft");
@@ -93,16 +97,42 @@ $(function () {
     $insertTarget.after($fieldsetDateInfo);
   }
 
-  // Initial invoke
-  reorganizeIssueView();
-  reorganizeIssueForm();
+  function reorganizeIssueFormForNewForm() {
+    const $issueForm = $("#issue-form");
+    const $insertTarget = $issueForm.find("#attributes>div.splitcontent:first");
+    const {
+      $splitcontent: $dateInfoSplitcontent,
+      $splitcontentLeft,
+      $splitcontentRight,
+    } = generateSplitcontentTemplate();
+    $dateInfoSplitcontent.addClass("dateinfo");
 
-  // Override the original function
-  var replaceIssueFormWithOrg = replaceIssueFormWith;
-  replaceIssueFormWith = function (html) {
-    replaceIssueFormWithOrg(html);
-    reorganizeIssueForm();
-  };
+    // Define form elements to move
+    const $actualStartDateForm = $issueForm
+      .find("label[for=issue_custom_field_values_" + actualStartDateCfId + "]")
+      .parent();
+
+    const $actualEndDateForm = $issueForm
+      .find("label[for=issue_custom_field_values_" + actualEndDateCfId + "]")
+      .parent();
+
+    // Move elements
+    $splitcontentLeft
+      .append($("#start_date_area"))
+      .append($actualStartDateForm);
+    $splitcontentRight.append($("#due_date_area")).append($actualEndDateForm);
+
+    // Remove old dateinfo splitcontent if exists
+    $("#issue-form .splitcontent.dateinfo").remove();
+
+    // Append new content to the form
+    $insertTarget.after($dateInfoSplitcontent);
+
+    // Add hr
+    if ($dateInfoSplitcontent.prev()[0].nodeName !== "HR") {
+      $dateInfoSplitcontent.before("<hr>");
+    }
+  }
 
   /**
    * Set up form change detection.
@@ -136,6 +166,32 @@ $(function () {
     }
   }
 
-  // Initialize form change detection
-  setupFormChangeDetection();
+  function initialize() {
+    if (!isNewForm) {
+      // Initial invoke
+      reorganizeIssueView();
+
+      // Initialize form change detection
+      setupFormChangeDetection();
+    }
+
+    if (isNewForm || isEditable) {
+      if (isNewForm) {
+        // Replace reorganizeIssueForm with the new form version
+        reorganizeIssueForm = reorganizeIssueFormForNewForm;
+      }
+
+      // Initial invoke
+      reorganizeIssueForm();
+
+      // Override the original function
+      var replaceIssueFormWithOrg = replaceIssueFormWith;
+      replaceIssueFormWith = function (html) {
+        replaceIssueFormWithOrg(html);
+        reorganizeIssueForm();
+      };
+    }
+  }
+
+  initialize();
 });

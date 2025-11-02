@@ -58,8 +58,13 @@ $(function () {
     $insertTarget.after($dateInfoSplitcontent);
 
     // Add hr
-    $dateInfoSplitcontent.before("<hr>");
-    if ($dateInfoSplitcontent.nextAll(".splitcontent").length > 0) {
+    if ($dateInfoSplitcontent.prev()[0].nodeName !== "HR") {
+      $dateInfoSplitcontent.before("<hr>");
+    }
+    if (
+      $dateInfoSplitcontent.next()[0].nodeName !== "HR" &&
+      $dateInfoSplitcontent.nextAll(".splitcontent").length > 0
+    ) {
       $dateInfoSplitcontent.after("<hr>");
     }
   }

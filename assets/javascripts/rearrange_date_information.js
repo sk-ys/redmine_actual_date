@@ -192,6 +192,7 @@ $(function () {
       // Override the original function
       var replaceIssueFormWithOrg = replaceIssueFormWith;
       replaceIssueFormWith = function (html) {
+        $("#issue-form .dateinfo").empty();  // Clear existing content to avoid duplication
         replaceIssueFormWithOrg(html);
         reorganizeIssueForm();
       };

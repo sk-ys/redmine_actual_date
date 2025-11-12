@@ -130,6 +130,10 @@ $(function () {
     // Remove old dateinfo splitcontent if exists
     $("#issue-form .splitcontent.dateinfo").remove();
 
+    if ($dateInfoSplitcontent.find("input").length === 0) {
+      return; // No inputs to show, skip adding the section
+    }
+
     // Append new content to the form
     $insertTarget.after($dateInfoSplitcontent);
 
@@ -192,7 +196,7 @@ $(function () {
       // Override the original function
       var replaceIssueFormWithOrg = replaceIssueFormWith;
       replaceIssueFormWith = function (html) {
-        $("#issue-form .dateinfo").empty();  // Clear existing content to avoid duplication
+        $("#issue-form .dateinfo").empty(); // Clear existing content to avoid duplication
         replaceIssueFormWithOrg(html);
         reorganizeIssueForm();
       };

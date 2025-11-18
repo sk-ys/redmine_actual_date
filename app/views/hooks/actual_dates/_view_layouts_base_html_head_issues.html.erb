@@ -10,8 +10,6 @@
   %>
   </script>
 
-  <% if action == 'show' or action == 'new' or action == 'create' %>
-    <%= javascript_include_tag('rearrange_date_information.js',
-                               plugin: 'redmine_actual_date') %>
-  <% end %>
+  <%= javascript_include_tag('rearrange_date_information.js',
+                              plugin: 'redmine_actual_date') %>
 <% end %>

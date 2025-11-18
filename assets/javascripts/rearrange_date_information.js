@@ -3,9 +3,15 @@ $(function () {
   const actualStartDateCfId = ActualDates["cfId"]["start"];
   const actualEndDateCfId = ActualDates["cfId"]["end"];
   const labelDateInformation = ActualDates["labelDateInformation"];
-  const isNewForm = ["controller-issues", "action-new"].every((c) =>
+  const actionShow = ["controller-issues", "action-show"].every((c) =>
     $("body").hasClass(c)
   );
+  const actionNew = ["controller-issues", "action-new"].every((c) =>
+    $("body").hasClass(c)
+  );
+  const actionEditOrUpdate =
+    $("body").hasClass("controller-issues") &&
+    ["action-edit", "action-update"].some((c) => $("body").hasClass(c));
   const isEditable = $("#update").length !== 0;
 
   function generateSplitcontentTemplate() {
@@ -141,6 +147,9 @@ $(function () {
     if ($dateInfoSplitcontent.prev()[0].nodeName !== "HR") {
       $dateInfoSplitcontent.before("<hr>");
     }
+    if ($dateInfoSplitcontent.next()[0].nodeName !== "HR") {
+      $dateInfoSplitcontent.after("<hr>");
+    }
   }
 
   /**
@@ -176,7 +185,7 @@ $(function () {
   }
 
   function initialize() {
-    if (!isNewForm) {
+    if (actionShow) {
       // Initial invoke
       reorganizeIssueView();
 
@@ -184,8 +193,8 @@ $(function () {
       setupFormChangeDetection();
     }
 
-    if (isNewForm || isEditable) {
-      if (isNewForm) {
+    if (actionNew || actionEditOrUpdate || (actionShow && isEditable)) {
+      if (actionNew) {
         // Replace reorganizeIssueForm with the new form version
         reorganizeIssueForm = reorganizeIssueFormForNewForm;
       }

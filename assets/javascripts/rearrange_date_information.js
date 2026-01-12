@@ -60,6 +60,11 @@ $(function () {
       .append($issueAttributes.find("div.attribute.due-date"))
       .append($actualEndDateField);
 
+    // Prevent if there are no fields to show
+    if ($dateInfoSplitcontent.find("div.attribute").length === 0) {
+      return;
+    }
+
     // Insert new splitcontent to the issue attributes
     $insertTarget.after($dateInfoSplitcontent);
 

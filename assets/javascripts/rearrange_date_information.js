@@ -109,6 +109,11 @@ $(function () {
     // Remove old dateinfo fieldset if exists
     $("#issue-form fieldset.dateinfo").remove();
 
+    // Prevent if there are no inputs to show
+    if ($fieldsetDateInfo.find("input").length === 0) {
+      return;
+    }
+
     // Append new filedset to the form
     $insertTarget.after($fieldsetDateInfo);
   }

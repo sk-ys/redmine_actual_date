@@ -93,18 +93,28 @@ $(function () {
 
     // Define form elements to move
     const $actualStartDateForm = $issueForm
-      .find("label[for=issue_custom_field_values_" + actualStartDateCfId + "]")
+      .find(
+        "#all_attributes label[for=issue_custom_field_values_" +
+          actualStartDateCfId +
+          "]"
+      )
       .parent();
 
     const $actualEndDateForm = $issueForm
-      .find("label[for=issue_custom_field_values_" + actualEndDateCfId + "]")
+      .find(
+        "#all_attributes label[for=issue_custom_field_values_" +
+          actualEndDateCfId +
+          "]"
+      )
       .parent();
 
     // Move elements
     $splitcontentLeft
-      .append($("#start_date_area"))
+      .append($("#all_attributes #start_date_area"))
       .append($actualStartDateForm);
-    $splitcontentRight.append($("#due_date_area")).append($actualEndDateForm);
+    $splitcontentRight
+      .append($("#all_attributes #due_date_area"))
+      .append($actualEndDateForm);
 
     // Remove old dateinfo fieldset if exists
     $("#issue-form fieldset.dateinfo").remove();
@@ -130,18 +140,28 @@ $(function () {
 
     // Define form elements to move
     const $actualStartDateForm = $issueForm
-      .find("label[for=issue_custom_field_values_" + actualStartDateCfId + "]")
+      .find(
+        "#all_attributes label[for=issue_custom_field_values_" +
+          actualStartDateCfId +
+          "]"
+      )
       .parent();
 
     const $actualEndDateForm = $issueForm
-      .find("label[for=issue_custom_field_values_" + actualEndDateCfId + "]")
+      .find(
+        "#all_attributes label[for=issue_custom_field_values_" +
+          actualEndDateCfId +
+          "]"
+      )
       .parent();
 
     // Move elements
     $splitcontentLeft
-      .append($("#start_date_area"))
+      .append($("#all_attributes #start_date_area"))
       .append($actualStartDateForm);
-    $splitcontentRight.append($("#due_date_area")).append($actualEndDateForm);
+    $splitcontentRight
+      .append($("#all_attributes #due_date_area"))
+      .append($actualEndDateForm);
 
     // Remove old dateinfo splitcontent if exists
     $("#issue-form .splitcontent.dateinfo").remove();
@@ -217,7 +237,8 @@ $(function () {
       replaceIssueFormWith = function (html) {
         $("#issue-form .dateinfo").empty(); // Clear existing content to avoid duplication
         replaceIssueFormWithOrg(html);
-        reorganizeIssueForm();
+        // Note: Use setTimeout to ensure this runs after the DOM is fully updated
+        setTimeout(reorganizeIssueForm, 10);
       };
     }
   }

@@ -10,6 +10,8 @@ capybara-*.html
 *.orig
 rerun.txt
 pickle-email-*.html
+.vscode
+.ruby-lsp
 
 # Ignore all logfiles and tempfiles.
 /log/*
@@ -65,4 +67,3 @@ yarn-debug.log*
 # Ignore uploaded files in development
 /storage/*
 !/storage/.keep
-.vscode

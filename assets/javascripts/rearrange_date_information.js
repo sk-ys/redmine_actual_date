@@ -140,28 +140,18 @@ $(function () {
 
     // Define form elements to move
     const $actualStartDateForm = $issueForm
-      .find(
-        "#all_attributes label[for=issue_custom_field_values_" +
-          actualStartDateCfId +
-          "]"
-      )
+      .find("label[for=issue_custom_field_values_" + actualStartDateCfId + "]")
       .parent();
 
     const $actualEndDateForm = $issueForm
-      .find(
-        "#all_attributes label[for=issue_custom_field_values_" +
-          actualEndDateCfId +
-          "]"
-      )
+      .find("label[for=issue_custom_field_values_" + actualEndDateCfId + "]")
       .parent();
 
     // Move elements
     $splitcontentLeft
-      .append($("#all_attributes #start_date_area"))
+      .append($("#start_date_area"))
       .append($actualStartDateForm);
-    $splitcontentRight
-      .append($("#all_attributes #due_date_area"))
-      .append($actualEndDateForm);
+    $splitcontentRight.append($("#due_date_area")).append($actualEndDateForm);
 
     // Remove old dateinfo splitcontent if exists
     $("#issue-form .splitcontent.dateinfo").remove();
@@ -237,8 +227,7 @@ $(function () {
       replaceIssueFormWith = function (html) {
         $("#issue-form .dateinfo").empty(); // Clear existing content to avoid duplication
         replaceIssueFormWithOrg(html);
-        // Note: Use setTimeout to ensure this runs after the DOM is fully updated
-        setTimeout(reorganizeIssueForm, 10);
+        reorganizeIssueForm();
       };
     }
   }

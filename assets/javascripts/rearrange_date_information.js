@@ -1,13 +1,24 @@
-$(function () {
+window.addEventListener("DOMContentLoaded", function () {
+  const defaultConfig = {
+    enableReorganizationForView: true,
+    enableReorganizationForEditForm: true,
+    enableReorganizationForNewForm: true,
+  };
+  window.actualDatePlugin = window.actualDatePlugin || {};
+  window.actualDatePlugin.config = {
+    ...defaultConfig,
+    ...(window.actualDatePlugin.config || {}),
+  };
+
   const ActualDates = JSON.parse($("#actual_dates_data").text());
   const actualStartDateCfId = ActualDates["cfId"]["start"];
   const actualEndDateCfId = ActualDates["cfId"]["end"];
   const labelDateInformation = ActualDates["labelDateInformation"];
   const actionShow = ["controller-issues", "action-show"].every((c) =>
-    $("body").hasClass(c)
+    $("body").hasClass(c),
   );
   const actionNew = ["controller-issues", "action-new"].every((c) =>
-    $("body").hasClass(c)
+    $("body").hasClass(c),
   );
   const actionEditOrUpdate =
     $("body").hasClass("controller-issues") &&
@@ -36,6 +47,9 @@ $(function () {
   }
 
   function reorganizeIssueView() {
+    if (!window.actualDatePlugin?.config?.enableReorganizationForView) {
+      return;
+    }
     const $issueAttributes = $("#content div.issue.details div.attributes");
     const $insertTarget = $issueAttributes.find("div.splitcontent:first");
     const {
@@ -46,10 +60,10 @@ $(function () {
 
     // Define view elements to move
     const $actualStartDateField = $issueAttributes.find(
-      "div.attribute.cf_" + actualStartDateCfId
+      "div.attribute.cf_" + actualStartDateCfId,
     );
     const $actualEndDateField = $issueAttributes.find(
-      "div.attribute.cf_" + actualEndDateCfId
+      "div.attribute.cf_" + actualEndDateCfId,
     );
 
     // Move elements
@@ -81,6 +95,9 @@ $(function () {
   }
 
   function reorganizeIssueForm() {
+    if (!window.actualDatePlugin?.config?.enableReorganizationForEditForm) {
+      return;
+    }
     const $issueForm = $("#issue-form");
     const $insertTarget = $issueForm.find("fieldset:first");
 
@@ -96,7 +113,7 @@ $(function () {
       .find(
         "#all_attributes label[for=issue_custom_field_values_" +
           actualStartDateCfId +
-          "]"
+          "]",
       )
       .parent();
 
@@ -104,7 +121,7 @@ $(function () {
       .find(
         "#all_attributes label[for=issue_custom_field_values_" +
           actualEndDateCfId +
-          "]"
+          "]",
       )
       .parent();
 
@@ -129,6 +146,9 @@ $(function () {
   }
 
   function reorganizeIssueFormForNewForm() {
+    if (!window.actualDatePlugin?.config?.enableReorganizationForNewForm) {
+      return;
+    }
     const $issueForm = $("#issue-form");
     const $insertTarget = $issueForm.find("#attributes>div.splitcontent:first");
     const {
